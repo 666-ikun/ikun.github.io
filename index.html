@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统崩溃恶作剧</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: black;
+            color: red;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .error {
+            font-size: 48px;
+            animation: shake 0.5s infinite alternate;
+        }
+        .message {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .progress {
+            width: 80%;
+            margin: 20px auto;
+            border: 2px solid red;
+            padding: 5px;
+            text-align: center;
+        }
+        .progress-bar {
+            background-color: red;
+            color: white;
+            width: 0%;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            transition: width 1s ease-in-out;
+        }
+        .console {
+            background-color: black;
+            color: green;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            padding: 10px;
+            border: 1px solid green;
+            width: 80%;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        .console p {
+            margin: 0;
+            padding: 0;
+        }
+        .console p:nth-child(odd) {
+            animation: blink 1s infinite;
+        }
+        .explosion {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            border-radius: 50%;
+            animation: explode 0.5s forwards;
+        }
+        .spark {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: yellow;
+            border-radius: 50%;
+            animation: sparkMove 1s forwards;
+        }
+        .warning {
+            font-size: 20px;
+            color: yellow;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        @keyframes shake {
+            0% { transform: translateX(-10px); }
+            100% { transform: translateX(10px); }
+        }
+        @keyframes explode {
+            0% {
+                width: 100px;
+                height: 100px;
+                opacity: 1;
+            }
+            100% {
+                width: 500px;
+                height: 500px;
+                opacity: 0;
+            }
+        }
+        @keyframes sparkMove {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
+        @keyframes fade {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="error">系统崩溃！</div>
+    <div class="message">正在尝试恢复系统...</div>
+    <div class="progress">
+        <div class="progress-bar" id="progress-bar">0%</div>
+    </div>
+    <div class="console">
+        <p>ERROR: SYSTEM FAILURE</p>
+        <p>ATTEMPTING RECOVERY...</p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 尝试进入全屏模式
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    // 如果无法进入全屏，忽略错误
+                });
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen().catch(err => {
+                    // 对于某些浏览器，使用webkit前缀
+                });
+            }
+
+            // 模拟锁定屏幕
+            const overlay = document.createElement("div");
+            overlay.style.position = "fixed";
+            overlay.style.top = "0";
+            overlay.style.left = "0";
+            overlay.style.width = "100%";
+            overlay.style.height = "100%";
+            overlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+            overlay.style.zIndex = "999999";
+            overlay.style.display = "flex";
+            overlay.style.justifyContent = "center";
+            overlay.style.alignItems = "center";
+            overlay.style.flexDirection = "column";
+            overlay.style.color = "red";
+            overlay.style.fontSize = "24px";
+            overlay.style.fontFamily = "Arial, sans-serif";
+            overlay.style.textAlign = "center";
+
+            overlay.innerHTML = `
+                <div class="error">系统崩溃！</div>
+                <div class="message">正在尝试恢复系统...</div>
+                <div class="progress">
+                    <div class="progress-bar" id="progress-bar-overlay">0%</div>
+                </div>
+                <div class="console">
+                    <p>ERROR: SYSTEM FAILURE</p>
+                    <p>ATTEMPTING RECOVERY...</p>
+                </div>
+                <div class="warning">请勿操作</div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            // 模拟进度条
+            let progress = 0;
+            const progressBar = document.getElementById('progress-bar');
+            const progressBarOverlay = document.getElementById('progress-bar-overlay');
+            const interval = setInterval(function() {
+                progress += 5;
+                progressBar.style.width = progress + '%';
+                progressBar.innerText = progress + '%';
+                progressBarOverlay.style.width = progress + '%';
+                progressBarOverlay.innerText = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    // 模拟恢复失败
+                    overlay.innerHTML = `
+                        <div class="error">恢复失败！</div>
+                        <div class="message">无法恢复系统状态。</div>
+                        <div class="message">正在尝试其他恢复方法...</div>
+                        <div class="console">
+                            <p>ERROR: RECOVERY FAILED</p>
+                            <p>ATTEMPTING ALTERNATIVE METHODS...</p>
+                        </div>
+                        <div class="warning">请勿操作</div>
+                    `;
+                    // 模拟爆炸效果
+                    createExplosion();
+                    createSpark();
+                    setTimeout(function() {
+                        overlay.innerHTML = `
+                            <div class="error">恢复失败！</div>
+                            <div class="message">无法恢复系统状态。</div>
+                            <div class="message">技术支持无法连接。</div>
+                            <div class="message">请重启设备。</div>
+                            <div class="console">
+                                <p>ERROR: SUPPORT UNAVAILABLE</p>
+                                <p>PLEASE RESTART YOUR DEVICE.</p>
+                            </div>
+                            <div class="warning">请勿操作</div>
+                        `;
+                        setTimeout(function() {
+                            overlay.style.animation = "fade 2s forwards";
+                            setTimeout(function() {
+                                overlay.remove();
+                                document.exitFullscreen().catch(err => {
+                                    // 如果无法退出全屏，忽略错误
+                                });
+                                document.body.innerHTML = `
+                                    <div class="error" style="color: green; animation: fade 2s forwards;">哈哈，愚人节快乐！</div>
+                                    <div class="message" style="color: green; animation: fade 2s forwards;">你被恶作剧了！</div>
+                                    <div class="console" style="color: green; animation: fade 2s forwards;">
+                                        <p>这只是一个玩笑，你的设备完全正常。</p>
+                                        <p>请放心，没有系统崩溃。</p>
+                                    </div>
+                                `;
+                            }, 2000); // 等待动画结束
+                        }, 5000); // 5秒后揭示真相
+                    }, 5000); // 5秒后显示技术支持无法连接
+                }
+            }, 1000);
+
+            // 创建爆炸效果
+            function createExplosion() {
+                const explosion = document.createElement('div');
+                explosion.classList.add('explosion');
+                document.body.appendChild(explosion);
+                setTimeout(() => {
+                    explosion.remove();
+                }, 500);
+            }
+
+            // 创建火花效果
+            function createSpark() {
+                const spark = document.createElement('div');
+                spark.classList.add('spark');
+                spark.style.left = `${Math.random() * window.innerWidth}px`;
+                spark.style.top = `${Math.random() * window.innerHeight}px`;
+                document.body.appendChild(spark);
+                setTimeout(() => {
+                    spark.remove();
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
